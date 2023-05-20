@@ -2,14 +2,22 @@
 	"name": "themestar",
 	"displayName": "ThemeStar",
 	"description": "Save your favorite themes",
-	"version": "0.0.1",
+	"version": "1.0.0",
+	"repository": {
+		"url": "https://github.com/chetan/ThemeStar"
+	},
+	"publisher": "PixelcopResearch",
 	"engines": {
-		"vscode": "^1.69.0"
+		"vscode": "^1.70.1"
 	},
 	"categories": [
 		"Other"
 	],
+	"extensionKind": [
+		"ui"
+	],
 	"activationEvents": [
+		"onStartupFinished",
 		"onCommand:themestar.addFavorite",
 		"onCommand:themestar.removeFavorite",
 		"onCommand:themestar.selectFavorite"
