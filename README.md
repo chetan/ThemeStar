@@ -1,5 +1,8 @@
 # ThemeStar
 
+
+
+
 A simple VS Code extension to save your favorite themes and quickly switch
 between them.
 
@@ -17,3 +20,9 @@ Adds the following commands to the Command Palette:
 - ThemeStar: Remove favorites
 
 ![command palette](docs/palette.png)
+
+## License
+
+MIT, (c) 2023 Pixelcop Research, Inc.
+
+[ThemeStar logo](./docs/themestar.png) created by [Freepik - Flaticon](https://www.flaticon.com/free-icons/coding "coding icons").

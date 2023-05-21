@@ -2,6 +2,7 @@
 	"name": "themestar",
 	"displayName": "ThemeStar",
 	"description": "Save your favorite themes",
+	"icon": "docs/themestar.png",
 	"version": "1.0.0",
 	"repository": {
 		"url": "https://github.com/chetan/ThemeStar"
