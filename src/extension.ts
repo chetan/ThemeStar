@@ -125,24 +125,28 @@ export function activate(context: vscode.ExtensionContext) {
 	// select from favorites
 	context.subscriptions.push(
 		vscode.commands.registerCommand('themestar.selectFavorite', async () => {
+			const noFaves = "No favorites yet";
 			// vscode.extensions.onDidChange(() => {
 			// 	outputChannel.appendLine("extensions.all changed!!! dumping again");
 			// 	dumpExtList();
 			// });
 			const previousTheme: string = await vscode.workspace.getConfiguration().get("workbench.colorTheme") || "";
-			console.log("previous theme: " + previousTheme);
 			let changed = false;
 			const quickPick = vscode.window.createQuickPick();
 
-			if (!favorites.length) {
-				// FIXME: add quickpick item and make selection do nothing if selected?
-				outputChannel.appendLine("no favorites found");
-			}
-
+			let items: vscode.QuickPickItem[];
 			// add light themes
-			let items = favsToQuickPickItems(previousTheme, false);
+			items = favsToQuickPickItems(previousTheme, false);
 			// add dark themes
 			items = items.concat(favsToQuickPickItems(previousTheme, true));
+			if (favorites.length) {
+				// add light themes
+				items = favsToQuickPickItems(previousTheme, false);
+				// add dark themes
+				items = items.concat(favsToQuickPickItems(previousTheme, true));
+			} else {
+				items = [{ label: noFaves, alwaysShow: true }];
+			}
 
 			quickPick.items = items;
 			quickPick.activeItems = items.filter((item) => item.picked);
@@ -150,8 +154,10 @@ export function activate(context: vscode.ExtensionContext) {
 			quickPick.onDidChangeSelection(sel => {
 				if (sel[0]) {
 					const newTheme = sel[0].label;
-					changeTheme(newTheme);
-					changed = true;
+					if (newTheme !== noFaves) {
+						changeTheme(newTheme);
+						changed = true;
+					}
 					quickPick.hide();
 				}
 			});
@@ -160,7 +166,9 @@ export function activate(context: vscode.ExtensionContext) {
 			quickPick.onDidChangeActive(sel => {
 				if (sel[0]) {
 					const newTheme = sel[0].label;
-					changeTheme(newTheme);
+					if (newTheme !== noFaves) {
+						changeTheme(newTheme);
+					}
 				}
 			});
 
