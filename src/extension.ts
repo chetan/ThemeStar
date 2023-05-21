@@ -70,7 +70,6 @@ export function activate(context: vscode.ExtensionContext) {
 		context.globalState.update(favoritesKey, favorites);
 	}
 
-	outputChannel.appendLine("extension starting up....");
 	if (oldFavorites?.length) {
 		migrateFavorites();
 	}
@@ -102,7 +101,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// Remove current theme from favorites
 	context.subscriptions.push(
 		vscode.commands.registerCommand('themestar.removeFavorite', async () => {
-			// TODO: update remove theme
 			const currentTheme: string | undefined = await vscode.workspace.getConfiguration().get("workbench.colorTheme");
 			if (!currentTheme) {
 				vscode.window.showWarningMessage('ThemeStar: failed to get current theme');
@@ -113,6 +111,17 @@ export function activate(context: vscode.ExtensionContext) {
 		})
 	);
 
+	function favsToQuickPickItems(previousTheme: string, dark: boolean): vscode.QuickPickItem[] {
+		const label = dark ? "Dark Themes" : "Light Themes";
+		return favorites.filter((fav) => !fav.isDark).sort((a, b) => a.name.localeCompare(b.name)).flatMap((fav, i) => {
+			const picked = fav.name === previousTheme;
+			if (i === 0) {
+				return [{ label, kind: vscode.QuickPickItemKind.Separator }, { label: fav.name, picked }];
+			}
+			return { label: fav.name, picked };
+		});
+	}
+
 	// select from favorites
 	context.subscriptions.push(
 		vscode.commands.registerCommand('themestar.selectFavorite', async () => {
@@ -121,6 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// 	dumpExtList();
 			// });
 			const previousTheme: string = await vscode.workspace.getConfiguration().get("workbench.colorTheme") || "";
+			console.log("previous theme: " + previousTheme);
 			let changed = false;
 			const quickPick = vscode.window.createQuickPick();
 
@@ -130,24 +140,12 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			// add light themes
-			// TODO: sort when showing
-			// TODO: mark currently selected theme as active item
-			// oldFavorites.sort((a, b) => a.localeCompare(b));
-			quickPick.items = favorites.filter((fav) => !fav.isDark).flatMap((fav, i) => {
-				if (i === 0) {
-					return [{ label: "Light Themes", kind: vscode.QuickPickItemKind.Separator }, { label: fav.name }];
-				}
-				return { label: fav.name };
-			});
-
+			let items = favsToQuickPickItems(previousTheme, false);
 			// add dark themes
-			quickPick.items = quickPick.items.concat(favorites.filter((fav) => fav.isDark).flatMap((fav, i) => {
-				if (i === 0) {
-					return [{ label: "Dark Themes", kind: vscode.QuickPickItemKind.Separator }, { label: fav.name }];
-				}
-				return { label: fav.name };
-			}));
+			items = items.concat(favsToQuickPickItems(previousTheme, true));
 
+			quickPick.items = items;
+			quickPick.activeItems = items.filter((item) => item.picked);
 
 			quickPick.onDidChangeSelection(sel => {
 				if (sel[0]) {
@@ -157,6 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
 					quickPick.hide();
 				}
 			});
+
 			// When selection changes but not yet confirmed
 			quickPick.onDidChangeActive(sel => {
 				if (sel[0]) {
@@ -164,20 +163,21 @@ export function activate(context: vscode.ExtensionContext) {
 					changeTheme(newTheme);
 				}
 			});
+
 			quickPick.onDidHide(() => {
 				if (!changed && previousTheme) {
 					changeTheme(previousTheme);
 				}
 				quickPick.dispose();
 			});
-			quickPick.show();
 
+			quickPick.show();
 		})
 	);
 
 }
 
-export function deactivate() {}
+export function deactivate() { }
 
 function changeTheme(newTheme: string, notify: boolean = false) {
 	vscode.workspace.getConfiguration().update("workbench.colorTheme", newTheme).then(
