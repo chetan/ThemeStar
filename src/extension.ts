@@ -113,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	function favsToQuickPickItems(previousTheme: string, dark: boolean): vscode.QuickPickItem[] {
 		const label = dark ? "Dark Themes" : "Light Themes";
-		return favorites.filter((fav) => !fav.isDark).sort((a, b) => a.name.localeCompare(b.name)).flatMap((fav, i) => {
+		return favorites.filter((fav) => fav.isDark === dark).sort((a, b) => a.name.localeCompare(b.name)).flatMap((fav, i) => {
 			const picked = fav.name === previousTheme;
 			if (i === 0) {
 				return [{ label, kind: vscode.QuickPickItemKind.Separator }, { label: fav.name, picked }];
