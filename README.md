@@ -12,7 +12,8 @@ shortlist to switch more easily.
 Adds the following commands to the Command Palette:
 
 - ThemeStar: Save current theme
-- ThemeStar: Remove current theme from favorites
 - ThemeStar: Select from favorites
+- ThemeStar: Remove current theme from favorites
+- ThemeStar: Remove favorites
 
 ![command palette](docs/palette.png)
