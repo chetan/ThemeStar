@@ -20,6 +20,7 @@
 		"onStartupFinished",
 		"onCommand:themestar.addFavorite",
 		"onCommand:themestar.removeFavorite",
+		"onCommand:themestar.removeFavoriteList",
 		"onCommand:themestar.selectFavorite"
 	],
 	"main": "./out/extension.js",
@@ -36,6 +37,10 @@
 			{
 				"command": "themestar.removeFavorite",
 				"title": "ThemeStar: Remove current theme from favorites"
+			},
+			{
+				"command": "themestar.removeFavoriteList",
+				"title": "ThemeStar: Remove favorites"
 			}
 		]
 	},
